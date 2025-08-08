@@ -1,4 +1,4 @@
-// Baker's percentage recipe definitions
+// --- Recipe data ---
 const RECIPES = {
   pizza: {
     name: "Pizza Dough",
@@ -35,28 +35,42 @@ const RECIPES = {
       { text: "Shape into loaf, let rise for 40 minutes.", timer: { minutes: 40 } },
       { text: "Bake at 220°C (430°F) for 30 minutes.", timer: { minutes: 30 } }
     ]
+  },
+  kenji_pizza: {
+    name: "James Kenji Lopez-Alt - Simple No-Knead Pizza Dough",
+    percentages: [
+      { name: "Flour (bread or all-purpose)", percent: 100 },
+      { name: "Water (lukewarm)", percent: 66.7 },
+      { name: "Salt", percent: 2 },
+      { name: "Yeast (instant)", percent: 0.5 },
+      { name: "Lemon juice/vinegar", percent: 0 }
+    ],
+    instructions: [
+      { text: "In a bowl, combine the flour, salt, yeast, and a few drops of lemon juice or vinegar. Stir with your hands to roughly mix.", timer: null },
+      { text: "Add the water and mix until no dry flour remains. Cover with a second bowl or plastic wrap.", timer: null },
+      { text: "Let rest at room temperature for at least 8 hours and up to 16 hours.", timer: { hours: 8 } },
+      { text: "Optional: Cold ferment in refrigerator for up to 3 days.", timer: { hours: 72 } },
+      { text: "Dust dough and work surface with flour. Turn out and divide into even pieces.", timer: null },
+      { text: "Form each piece into a ball, stretching the dough over itself to form a smooth skin.", timer: null },
+      { text: "Cover and proof until doubled in size, about 2 hours.", timer: { hours: 2 } },
+      { text: "Dough is ready to stretch, top, and bake.", timer: null }
+    ]
   }
 };
 
-// Calculate ingredient weights from baker's percentages
+// --- Ingredient scaling ---
 function calculateIngredients(recipeKey, numItems, itemWeight) {
   const recipe = RECIPES[recipeKey];
+  if (!recipe) return null;
   const percentages = recipe.percentages;
-  const totalDough = numItems * itemWeight; // grams
-
-  // Sum of all percentages as a factor of flour
+  const totalDough = numItems * itemWeight;
   let percentSum = percentages.reduce((acc, ing) => acc + ing.percent, 0);
-
-  // Total flour weight
   let flourWeight = totalDough / (percentSum / 100);
-
-  // Calculate ingredient weights
   let ingredients = percentages.map(ing => ({
     name: ing.name,
     percent: ing.percent,
-    weight: +(flourWeight * (ing.percent / 100)).toFixed(1) // rounded to 1 decimal
+    weight: +(flourWeight * (ing.percent / 100)).toFixed(1)
   }));
-
   return {
     totalDough: +(totalDough).toFixed(1),
     flourWeight: +(flourWeight).toFixed(1),
@@ -64,14 +78,18 @@ function calculateIngredients(recipeKey, numItems, itemWeight) {
   };
 }
 
+// --- Renderers ---
 function renderIngredients(recipeKey, numItems, itemWeight) {
   const recipe = RECIPES[recipeKey];
   const data = calculateIngredients(recipeKey, numItems, itemWeight);
-
-  // Show total dough
-  document.getElementById('total-dough').textContent = `(total dough: ${data.totalDough}g)`;
-
-  // Show ingredient list
+  const totalDoughElem = document.getElementById('total-dough');
+  if (!data || !recipe) {
+    totalDoughElem.textContent = '';
+    document.getElementById('ingredients-list').innerHTML = '';
+    document.getElementById('percentages-note').innerHTML = '';
+    return;
+  }
+  totalDoughElem.textContent = `(total dough: ${data.totalDough}g)`;
   const list = document.getElementById('ingredients-list');
   list.innerHTML = '';
   data.ingredients.forEach(ing => {
@@ -79,8 +97,6 @@ function renderIngredients(recipeKey, numItems, itemWeight) {
     li.textContent = `${ing.name}: ${ing.weight} g (${ing.percent}%)`;
     list.appendChild(li);
   });
-
-  // Show baker's percentage note
   document.getElementById('percentages-note').innerHTML =
     `All ingredient amounts are calculated using baker's percentages (flour = 100%).<br>
     The total dough weight is distributed among all ingredients.`;
@@ -90,6 +106,7 @@ function renderInstructions(recipeKey) {
   const recipe = RECIPES[recipeKey];
   const list = document.getElementById('instructions-list');
   list.innerHTML = '';
+  if (!recipe) return;
   recipe.instructions.forEach((step, i) => {
     const li = document.createElement('li');
     li.textContent = step.text;
@@ -100,6 +117,7 @@ function renderInstructions(recipeKey) {
   });
 }
 
+// --- Timer logic ---
 function formatTime(seconds) {
   let h = Math.floor(seconds / 3600);
   let m = Math.floor((seconds % 3600) / 60);
@@ -115,17 +133,16 @@ function setupTimers(recipeKey) {
   const recipe = RECIPES[recipeKey];
   const timersDiv = document.getElementById('timers-list');
   timersDiv.innerHTML = '';
+  if (!recipe) return;
   recipe.instructions.forEach((step, i) => {
     if (step.timer) {
       const timerDiv = document.createElement('div');
       timerDiv.className = 'timer';
       timerDiv.dataset.step = i;
-
       let totalSeconds =
         (step.timer.hours || 0) * 3600 +
         (step.timer.minutes || 0) * 60 +
         (step.timer.seconds || 0);
-
       timerDiv.innerHTML = `
         <div><strong>Step ${i + 1}:</strong> ${step.text}</div>
         <div class="time-remaining" id="timer-${i}">${formatTime(totalSeconds)}</div>
@@ -140,11 +157,11 @@ function setupTimers(recipeKey) {
   });
 }
 
-const timerStates = {}; // {step: {interval, remaining, running, original}}
+const timerStates = {}; // step: {interval, remaining, running, original}
 
 function initTimers(recipeKey) {
-  // Re-init all timer states
   const recipe = RECIPES[recipeKey];
+  if (!recipe) return;
   recipe.instructions.forEach((step, i) => {
     if (step.timer) {
       let totalSeconds =
@@ -185,6 +202,7 @@ function updateTimerDisplay(step) {
 }
 
 function startTimer(step) {
+  step = Number(step);
   if (timerStates[step].running) return;
   timerStates[step].running = true;
   document.querySelector(`.start-btn[data-step="${step}"]`).disabled = true;
@@ -199,12 +217,13 @@ function startTimer(step) {
       timerStates[step].running = false;
       updateTimerDisplay(step);
       document.querySelector(`.pause-btn[data-step="${step}"]`).disabled = true;
-      alert(`Step ${parseInt(step) + 1} timer finished!`);
+      alert(`Step ${step + 1} timer finished!`);
     }
   }, 1000);
 }
 
 function pauseTimer(step) {
+  step = Number(step);
   if (!timerStates[step].running) return;
   clearInterval(timerStates[step].interval);
   timerStates[step].running = false;
@@ -213,6 +232,7 @@ function pauseTimer(step) {
 }
 
 function resetTimer(step) {
+  step = Number(step);
   clearInterval(timerStates[step].interval);
   timerStates[step].remaining = timerStates[step].original;
   timerStates[step].running = false;
@@ -222,6 +242,7 @@ function resetTimer(step) {
   document.querySelector(`.reset-btn[data-step="${step}"]`).disabled = true;
 }
 
+// --- Main update ---
 function updateAll(recipeKey, numItems, itemWeight) {
   renderIngredients(recipeKey, numItems, itemWeight);
   renderInstructions(recipeKey);
@@ -230,12 +251,14 @@ function updateAll(recipeKey, numItems, itemWeight) {
   attachTimerEvents(recipeKey);
 }
 
+// --- DOM ready and event wiring ---
 document.addEventListener('DOMContentLoaded', () => {
   const recipeSelect = document.getElementById('recipe-select');
   const numItemsInput = document.getElementById('num-items');
   const itemWeightInput = document.getElementById('item-weight');
   const updateBtn = document.getElementById('update-btn');
 
+  // Initial values
   let currentRecipe = recipeSelect.value;
   let numItems = parseInt(numItemsInput.value, 10);
   let itemWeight = parseInt(itemWeightInput.value, 10);
@@ -245,7 +268,7 @@ document.addEventListener('DOMContentLoaded', () => {
   updateBtn.addEventListener('click', () => {
     currentRecipe = recipeSelect.value;
     numItems = Math.max(1, parseInt(numItemsInput.value, 10));
-    itemWeight = Math.max(50, parseInt(itemWeightInput.value, 10)); // Minimum 50g
+    itemWeight = Math.max(50, parseInt(itemWeightInput.value, 10));
     updateAll(currentRecipe, numItems, itemWeight);
   });
 

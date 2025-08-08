@@ -2,41 +2,50 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Pizza & Bread Dough Recipes (Baker's Percentage)</title>
+  <title>Pizza & Bread Dough Recipes</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>Pizza & Bread Dough Recipes</h1>
+  <header>
+    <h1>Pizza & Bread Dough Recipes</h1>
+    <div style="color:#7c4f2c; font-size:1.1em;">Baker’s percentage | Scalable | Timer built-in</div>
+  </header>
 
-  <div id="scale-options">
-    <label for="recipe-select">Choose Recipe:</label>
-    <select id="recipe-select">
-      <option value="pizza">Pizza Dough</option>
-      <option value="bread">Bread Dough</option>
-    </select>
-    <label for="num-items">Number of items:</label>
-    <input type="number" id="num-items" min="1" value="1">
-    <label for="item-weight">Weight per item (g):</label>
-    <input type="number" id="item-weight" min="50" value="250">
-    <button id="update-btn">Update Ingredients</button>
+  <div class="main-container">
+
+    <div class="card" id="scale-card">
+      <form id="scale-options">
+        <label for="recipe-select">Choose Recipe:</label>
+        <select id="recipe-select">
+          <option value="pizza">Pizza Dough</option>
+          <option value="bread">Bread Dough</option>
+          <option value="kenji_pizza">Simple No-Knead Pizza Dough</option>
+        </select>
+        <label for="num-items">Number of items:</label>
+        <input type="number" id="num-items" min="1" value="1">
+        <label for="item-weight">Weight per item (g):</label>
+        <input type="number" id="item-weight" min="50" value="250">
+        <button id="update-btn" type="button">Update Ingredients</button>
+      </form>
+    </div>
+
+    <section class="card" id="ingredients-section">
+      <h2>Ingredients <span id="total-dough"></span></h2>
+      <ul id="ingredients-list"></ul>
+      <div id="percentages-note" class="note"></div>
+    </section>
+
+    <section class="card" id="instructions-section">
+      <h2>Instructions</h2>
+      <ol id="instructions-list"></ol>
+    </section>
+
+    <section class="card" id="timers-section">
+      <h2>Step Timers</h2>
+      <div id="timers-list"></div>
+    </section>
   </div>
-
-  <section id="ingredients-section">
-    <h2>Ingredients <span id="total-dough"></span></h2>
-    <ul id="ingredients-list"></ul>
-    <div id="percentages-note" class="note"></div>
-  </section>
-
-  <section id="instructions-section">
-    <h2>Instructions</h2>
-    <ol id="instructions-list"></ol>
-  </section>
-
-  <section id="timers-section">
-    <h2>Step Timers</h2>
-    <div id="timers-list"></div>
-  </section>
 
   <script src="script.js"></script>
 </body>

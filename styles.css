@@ -1,67 +1,207 @@
 body {
-  font-family: Arial, sans-serif;
-  max-width: 700px;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: #f7f7fc;
+  color: #24292f;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.03);
+  padding: 2rem 0 1rem 0;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ce3c10;
+  margin: 0 0 0.5rem 0;
+}
+h2 {
+  font-size: 1.5rem;
+  color: #ce3c10;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.main-container {
+  max-width: 800px;
   margin: 0 auto;
-  background: #fffbe9;
-  color: #333;
-  padding: 2em;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
 }
-h1, h2 {
-  color: #c1440e;
+
+.card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  margin-bottom: 2rem;
 }
+
 #scale-options {
   display: flex;
-  gap: 1em;
-  align-items: center;
-  margin-bottom: 2em;
   flex-wrap: wrap;
+  gap: 1.5rem 2rem;
+  align-items: flex-end;
+  margin-bottom: 2rem;
 }
-input[type="number"] {
-  width: 70px;
+
+#scale-options label {
+  font-weight: 500;
+  margin-right: 0.5rem;
+  color: #495057;
 }
-button {
-  background: #c1440e;
+
+#scale-options select,
+#scale-options input[type="number"] {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ced4da;
+  background: #f8fafc;
+  margin-right: 0.5rem;
+  min-width: 120px;
+}
+
+#scale-options button {
+  padding: 0.5rem 1.5rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  background: #ce3c10;
   color: #fff;
   border: none;
-  padding: 0.5em 1em;
-  border-radius: 4px;
+  font-weight: 600;
+  margin-left: 0.5rem;
   cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  transition: background 0.2s;
 }
-button:disabled {
-  background: #ccc;
+#scale-options button:hover:not(:disabled) {
+  background: #e66a3c;
+}
+#scale-options button:disabled {
+  background: #e0e0e0;
+  color: #888;
   cursor: not-allowed;
 }
-#ingredients-section, #instructions-section, #timers-section {
-  margin-bottom: 2em;
+
+#ingredients-section ul {
+  padding-left: 1.2rem;
+  margin-bottom: 0.5rem;
 }
+#ingredients-section li {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  letter-spacing: 0.01em;
+}
+#ingredients-section .note {
+  font-size: 0.98em;
+  color: #7c4f2c;
+  background: #fff3e8;
+  border-radius: 6px;
+  padding: 0.5em 1em;
+  margin-top: 0.5em;
+}
+
+#total-dough {
+  color: #666;
+  font-size: 1.05em;
+  font-weight: 500;
+  margin-left: 0.5em;
+}
+
+#instructions-section ol {
+  padding-left: 1.2rem;
+}
+#instructions-section li {
+  margin-bottom: 1rem;
+  font-size: 1.08rem;
+}
+.start-timer-btn {
+  margin-left: 1rem;
+  padding: 0.35em 1em;
+  border-radius: 5px;
+  border: none;
+  background: #f2a55f;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+.start-timer-btn:hover {
+  background: #d47a22;
+}
+
 #timers-list {
   display: flex;
   flex-direction: column;
-  gap: 1em;
+  gap: 1.2em;
 }
+
 .timer {
-  border: 1px solid #c1440e;
-  border-radius: 4px;
-  padding: 1em;
-  background: #fff4dc;
+  border: 1px solid #f2a55f;
+  background: #fff4e6;
+  border-radius: 12px;
+  padding: 1em 1.5em;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
   display: flex;
   flex-direction: column;
   gap: 0.5em;
-  max-width: 350px;
+  max-width: 400px;
+  margin-bottom: 0.8em;
 }
+
 .timer-controls {
   display: flex;
-  gap: 0.5em;
+  gap: 0.6em;
+  margin-top: 0.2em;
+}
+.timer-controls button {
+  padding: 0.35em 1.2em;
+  border-radius: 6px;
+  border: none;
+  font-weight: 500;
+  font-size: 0.98rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  background: #f2a55f;
+  color: #fff;
+}
+.timer-controls button:disabled {
+  background: #f6e1c8;
+  color: #aaa;
+  cursor: not-allowed;
+}
+.timer-controls .start-btn:hover,
+.timer-controls .pause-btn:hover,
+.timer-controls .reset-btn:hover {
+  background: #d47a22;
 }
 .time-remaining {
-  font-size: 1.2em;
+  font-size: 1.25em;
   font-weight: bold;
+  color: #d47a22;
+  letter-spacing: 0.03em;
 }
-.note {
-  margin-top: 0.5em;
-  font-size: 0.95em;
-  color: #555;
-  background: #f7e6ce;
-  padding: 0.5em 1em;
-  border-radius: 3px;
+
+@media (max-width: 900px) {
+  .main-container {
+    max-width: 98vw;
+    padding: 1rem;
+  }
+  .card {
+    padding: 1rem 1rem 0.8rem 1rem;
+  }
+  #scale-options select,
+  #scale-options input[type="number"] {
+    min-width: 80px;
+    font-size: 0.98rem;
+  }
 }
